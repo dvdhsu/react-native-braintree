@@ -30,15 +30,17 @@ RCT_EXPORT_METHOD(setup:(NSString *)clientToken)
 
 RCT_EXPORT_METHOD(showPaymentViewController:(RCTResponseSenderBlock)callback)
 {
-  BTDropInViewController *dropInViewController = [self.braintree dropInViewControllerWithDelegate:self];
-  dropInViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(userDidCancelPayment)];
-
-  self.callback = callback;
-
-  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dropInViewController];
-
-  self.reactRoot = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-  [self.reactRoot presentViewController:navigationController animated:YES completion:nil];
+  dispatch_async(dispatch_get_main_queue(), ^{
+      BTDropInViewController *dropInViewController = [self.braintree dropInViewControllerWithDelegate:self];
+      dropInViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(userDidCancelPayment)];
+    
+      self.callback = callback;
+    
+      UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dropInViewController];
+    
+      self.reactRoot = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+      [self.reactRoot presentViewController:navigationController animated:YES completion:nil];
+    });
 }
 
 RCT_EXPORT_METHOD(showPayPalViewController:(RCTResponseSenderBlock)callback)
